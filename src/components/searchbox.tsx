@@ -139,7 +139,7 @@ const SearchCommandDialog = (props: {
 			) : status === "error" ? (
 				<div className="flex items-center gap-2 border-t p-4 text-red-500">
 					<Cross1Icon />
-					<span>An error has occurred 😢</span>
+					<span>An error has occurred.</span>
 				</div>
 			) : !!data ? (
 				data.length ? (
@@ -166,7 +166,9 @@ const SearchCommandDialog = (props: {
 						</CommandGroup>
 					</CommandList>
 				) : (
-					<Command.Empty>No movies found.</Command.Empty>
+					<Command.Empty className="p-4 text-muted-foreground">
+						No movies found.
+					</Command.Empty>
 				)
 			) : null}
 		</CommandDialog>
