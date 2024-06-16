@@ -1,5 +1,3 @@
-"use client"
-
 import { Cross1Icon, MagnifyingGlassIcon } from "@radix-ui/react-icons"
 import { Button } from "./ui/button"
 import { useEffect, useState } from "react"
