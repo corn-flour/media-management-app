@@ -1,6 +1,6 @@
 import { Cross1Icon, MagnifyingGlassIcon } from "@radix-ui/react-icons"
 import { Button } from "./ui/button"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import {
 	CommandDialog,
 	CommandGroup,
@@ -10,9 +10,9 @@ import {
 import { useDebounce } from "use-debounce"
 import { Command } from "cmdk"
 import { useQuery } from "@tanstack/react-query"
-import Link from "next/link"
+import { useRouter } from "next/router"
 
-export const SearchBox = () => {
+export const SearchBox = (props: { variant: "full" | "icon" }) => {
 	const [open, setOpen] = useState(false)
 
 	// toggle search bar with shortkeys
@@ -30,21 +30,31 @@ export const SearchBox = () => {
 
 	return (
 		<>
-			<Button
-				variant="outline"
-				className="relative w-full items-center justify-between rounded-full px-8 py-6"
-				onClick={() => setOpen(true)}
-			>
-				<div className="flex items-center justify-start gap-2">
+			{props.variant === "full" ? (
+				<Button
+					variant="outline"
+					className="relative w-full items-center justify-between rounded-full px-8 py-6"
+					onClick={() => setOpen(true)}
+				>
+					<div className="flex items-center justify-start gap-2">
+						<MagnifyingGlassIcon />
+						<span className="text-muted-foreground">
+							Find a movie...
+						</span>
+					</div>
+					<kbd className="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
+						<span className="text-xs">⌘</span>K
+					</kbd>
+				</Button>
+			) : (
+				<Button
+					onClick={() => setOpen(true)}
+					size="icon"
+					variant="ghost"
+				>
 					<MagnifyingGlassIcon />
-					<span className="text-muted-foreground">
-						Find a movie...
-					</span>
-				</div>
-				<kbd className="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
-					<span className="text-xs">⌘</span>K
-				</kbd>
-			</Button>
+				</Button>
+			)}
 			<SearchCommandDialog open={open} onOpenChange={setOpen} />
 		</>
 	)
@@ -63,8 +73,10 @@ const SearchCommandDialog = (props: {
 	open: boolean
 	onOpenChange: (open: boolean) => void
 }) => {
+	const { open, onOpenChange } = props
 	const [searchQuery, setSearchQuery] = useState("")
 	const [debouncedQuery] = useDebounce(searchQuery, 500)
+	const router = useRouter()
 
 	const { data, status, fetchStatus } = useQuery({
 		queryKey: ["search", debouncedQuery],
@@ -97,12 +109,21 @@ const SearchCommandDialog = (props: {
 
 	console.log("data", data, status, fetchStatus)
 
+	const runCommand = useCallback(
+		(command: () => unknown) => {
+			onOpenChange(false)
+			command()
+			setSearchQuery("")
+		},
+		[onOpenChange],
+	)
+
 	return (
 		<CommandDialog
-			open={props.open}
+			open={open}
 			onOpenChange={(open) => {
 				setSearchQuery("")
-				props.onOpenChange(open)
+				onOpenChange(open)
 			}}
 			shouldFilter={false}
 		>
@@ -115,6 +136,7 @@ const SearchCommandDialog = (props: {
 					className="flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
 					value={searchQuery}
 					onChange={(e) => setSearchQuery(e.target.value)}
+					placeholder="Find a movie..."
 				/>
 			</div>
 			{status === "pending" ? (
@@ -148,26 +170,28 @@ const SearchCommandDialog = (props: {
 								<CommandItem
 									key={movie.id}
 									className="cursor-pointer gap-2"
-									asChild
+									onSelect={() => {
+										runCommand(() =>
+											router.push(`/movies/${movie.id}`),
+										)
+									}}
 								>
-									<Link href={`/movies/${movie.id}`}>
-										{movie.preview.imageUrl !== "N/A" ? (
-											<picture>
-												<img
-													src={movie.preview.imageUrl}
-													alt={`Poster image for ${movie.preview.title}`}
-													width={50}
-													height={50}
-													className="aspect-square h-[50px] w-[50px] rounded-sm object-cover"
-												/>
-											</picture>
-										) : (
-											<div className="h-[50px] w-[50px] rounded-sm bg-muted"></div>
-										)}
-										<span className="flex-1">
-											{movie.preview.title}
-										</span>
-									</Link>
+									{movie.preview.imageUrl !== "N/A" ? (
+										<picture>
+											<img
+												src={movie.preview.imageUrl}
+												alt={`Poster image for ${movie.preview.title}`}
+												width={50}
+												height={50}
+												className="aspect-square h-[50px] w-[50px] rounded-sm object-cover"
+											/>
+										</picture>
+									) : (
+										<div className="h-[50px] w-[50px] rounded-sm bg-muted"></div>
+									)}
+									<span className="flex-1">
+										{movie.preview.title}
+									</span>
 								</CommandItem>
 							))}
 						</CommandGroup>
