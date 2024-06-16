@@ -54,6 +54,7 @@ export const Navbar = () => {
 						className="rounded-full border"
 					>
 						<PersonIcon className="h-6 w-6" />
+						<span className="sr-only">Search</span>
 					</Button>
 				</div>
 			</div>
