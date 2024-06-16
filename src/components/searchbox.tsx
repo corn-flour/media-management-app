@@ -10,6 +10,7 @@ import {
 import { useDebounce } from "use-debounce"
 import { Command } from "cmdk"
 import { useQuery } from "@tanstack/react-query"
+import Link from "next/link"
 
 export const SearchBox = () => {
 	const [open, setOpen] = useState(false)
@@ -144,21 +145,29 @@ const SearchCommandDialog = (props: {
 					<CommandList>
 						<CommandGroup>
 							{data.map((movie) => (
-								<CommandItem key={movie.id} className="gap-2">
-									{movie.preview.imageUrl !== "N/A" ? (
-										<picture>
-											<img
-												src={movie.preview.imageUrl}
-												alt={`Poster image for ${movie.preview.title}`}
-												width={50}
-												height={50}
-												className="aspect-square rounded-sm object-cover"
-											/>
-										</picture>
-									) : (
-										<div className="h-[50px] w-[50px] rounded-sm bg-muted"></div>
-									)}
-									<span>{movie.preview.title}</span>
+								<CommandItem
+									key={movie.id}
+									className="cursor-pointer gap-2"
+									asChild
+								>
+									<Link href={`/movies/${movie.id}`}>
+										{movie.preview.imageUrl !== "N/A" ? (
+											<picture>
+												<img
+													src={movie.preview.imageUrl}
+													alt={`Poster image for ${movie.preview.title}`}
+													width={50}
+													height={50}
+													className="aspect-square h-[50px] w-[50px] rounded-sm object-cover"
+												/>
+											</picture>
+										) : (
+											<div className="h-[50px] w-[50px] rounded-sm bg-muted"></div>
+										)}
+										<span className="flex-1">
+											{movie.preview.title}
+										</span>
+									</Link>
 								</CommandItem>
 							))}
 						</CommandGroup>
