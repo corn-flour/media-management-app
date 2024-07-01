@@ -11,6 +11,15 @@ import Link from "next/link"
 import { SearchBox } from "../searchbox"
 import { useSession } from "../sessions"
 import { useQuery } from "@tanstack/react-query"
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuGroup,
+	DropdownMenuItem,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "../ui/dropdown-menu"
+import { useRouter } from "next/router"
 
 const navItems = [
 	{
@@ -68,6 +77,7 @@ const ProfileButton = () => {
 			return response
 		},
 	})
+	const router = useRouter()
 
 	if (!isLoggedIn) {
 		return (
@@ -77,19 +87,24 @@ const ProfileButton = () => {
 		)
 	}
 
-	// TODO: handle log out
+	if (status === "pending") {
+		return <PersonIcon className="rounded-full border" />
+	}
+
+	// TODO: how should i handle this?
+	if (status === "error") {
+		logout()
+		router.push("/login")
+	}
+
 	return (
-		<Button size="icon" variant="secondary" className="rounded-full border">
-			{status === "pending" ? (
-				<>
-					<PersonIcon />
-				</>
-			) : status === "error" ? (
-				<>
-					<PersonIcon />
-				</>
-			) : (
-				<>
+		<DropdownMenu>
+			<DropdownMenuTrigger asChild>
+				<Button
+					size="icon"
+					variant="secondary"
+					className="rounded-full border"
+				>
 					<picture>
 						<img
 							src={data?.data.avatar}
@@ -99,8 +114,23 @@ const ProfileButton = () => {
 							height={34}
 						/>
 					</picture>
-				</>
-			)}
-		</Button>
+				</Button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent>
+				<DropdownMenuGroup>
+					<DropdownMenuItem>My Profile</DropdownMenuItem>
+					<DropdownMenuItem>Preferences</DropdownMenuItem>
+				</DropdownMenuGroup>
+				<DropdownMenuSeparator />
+				<DropdownMenuItem
+					onClick={() => {
+						logout()
+						router.push("/login")
+					}}
+				>
+					Log out
+				</DropdownMenuItem>
+			</DropdownMenuContent>
+		</DropdownMenu>
 	)
 }

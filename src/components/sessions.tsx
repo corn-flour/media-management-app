@@ -13,13 +13,13 @@ type SessionContext = {
 		identifier: string
 		password: string
 	}) => Promise<void>
-	logout: () => Promise<void>
+	logout: () => void
 	agent: BskyAgent | null
 }
 
 const SessionContext = createContext<SessionContext>({
 	login: async () => {},
-	logout: async () => {},
+	logout: () => {},
 	agent: null,
 })
 
@@ -43,7 +43,7 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
 	}
 
 	// log out of an ATP account
-	const logout = async () => {
+	const logout = () => {
 		setAgent(null)
 		localStorage.removeItem("service")
 		localStorage.removeItem("agentService")

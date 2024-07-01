@@ -14,6 +14,8 @@ import {
 	FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { ExclamationTriangleIcon } from "@radix-ui/react-icons"
 const loginSchema = z.object({
 	service: z.string().url(),
 	identifier: z.string(),
@@ -44,7 +46,14 @@ const LoginPage = () => {
 	}
 
 	return (
-		<div className="grid h-screen place-content-center p-4">
+		<div className="grid h-screen place-content-center space-y-4 p-4">
+			{!!submissionError && (
+				<Alert variant="destructive" className="bg-destructive/10">
+					<ExclamationTriangleIcon className="h-4 w-4" />
+					<AlertTitle>Login failed.</AlertTitle>
+					<AlertDescription>{submissionError}</AlertDescription>
+				</Alert>
+			)}
 			<Form {...form}>
 				<form
 					onSubmit={form.handleSubmit(onSubmit)}
