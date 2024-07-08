@@ -1,3 +1,4 @@
+import { RatingDialog } from "@/components/ratings/dialog"
 import { Button } from "@/components/ui/button"
 import { HeartIcon } from "@radix-ui/react-icons"
 import { useLoaderData } from "@remix-run/react"
@@ -80,7 +81,7 @@ const MovieResultPage = () => {
 								<p className="text-lg">{data.Year}</p>
 
 								<div className="mt-4 flex gap-2">
-									<Button>Add to list</Button>
+									<RatingDialog id={id} name={data.Title} />
 									<Button
 										variant="secondary"
 										size="icon"
