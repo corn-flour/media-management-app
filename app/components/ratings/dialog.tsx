@@ -12,9 +12,13 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form"
 import { Input } from "../ui/input"
 import { Button } from "../ui/button"
 import { useState } from "react"
+import { useSession } from "../sessions"
+import { useMutation } from "@tanstack/react-query"
+import { AtUri } from "@atproto/api"
+import { useToast } from "../ui/use-toast"
+import { useRatings } from "../providers/ratings"
 
 const ratingFormValidator = z.object({
-	id: z.string(),
 	rating: z.coerce.number().int().min(0).max(100),
 })
 
@@ -25,16 +29,51 @@ export const RatingDialog = (props: { id: string; name: string }) => {
 	const form = useForm({
 		resolver: zodResolver(ratingFormValidator),
 		defaultValues: {
-			id: `:${props.id}`,
 			rating: 0,
 		},
 	})
+	const { agent } = useSession()
+	const { toast } = useToast()
+	const { addRating } = useRatings()
 
-	const onSubmit: SubmitHandler<RatingFormFields> = (data) => {
-		// TODO:
-		alert("submitted")
-		console.log("submit rating", data)
-		setModalOpen(false)
+	const { mutate, status } = useMutation({
+		mutationFn: async (props: { mediaId: string; rating: number }) => {
+			const userDid = agent?.session?.did
+			if (!agent || !userDid) throw new Error("You are not signed in")
+			const response = await agent.com.atproto.repo.createRecord({
+				repo: userDid,
+				collection: "org.example.media.rating",
+				validate: false,
+				record: {
+					$type: "org.example.media.rating",
+					createdAt: new Date().toISOString(),
+					subject: `:${props.mediaId}`,
+					score: props.rating,
+				},
+			})
+
+			if (!response.success) throw new Error("Failed to add rating")
+
+			console.log("created record", response.data.cid, response.data.uri)
+			return response.data
+		},
+		onError: (error) => {
+			toast({ title: error.message, variant: "destructive" })
+		},
+
+		onSuccess: (data) => {
+			const atUri = new AtUri(data.uri)
+			addRating(props.id, atUri.rkey)
+			setModalOpen(false)
+			toast({ title: "Successfully added rating" })
+		},
+	})
+
+	const onSubmit: SubmitHandler<RatingFormFields> = async (data) => {
+		mutate({
+			mediaId: props.id,
+			rating: data.rating,
+		})
 	}
 
 	return (
@@ -53,24 +92,23 @@ export const RatingDialog = (props: { id: string; name: string }) => {
 					>
 						<FormField
 							control={form.control}
-							name="id"
-							render={({ field }) => (
-								<input type="hidden" value={field.value} />
-							)}
-						/>
-						<FormField
-							control={form.control}
 							name="rating"
 							render={({ field }) => (
 								<FormItem>
 									<FormLabel>Score</FormLabel>
 									<FormControl>
-										<Input type="number" {...field} />
+										<Input
+											type="number"
+											{...field}
+											disabled={status === "pending"}
+										/>
 									</FormControl>
 								</FormItem>
 							)}
 						/>
-						<Button type="submit">Save</Button>
+						<Button type="submit" disabled={status === "pending"}>
+							Save
+						</Button>
 					</form>
 				</Form>
 			</DialogContent>
