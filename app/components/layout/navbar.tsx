@@ -8,7 +8,7 @@ import {
 	navigationMenuTriggerStyle,
 } from "../ui/navigation-menu"
 import { SearchBox } from "../searchbox"
-import { useSession } from "../sessions"
+import { useSession } from "../providers/sessions"
 import { useQuery } from "@tanstack/react-query"
 import {
 	DropdownMenu,

@@ -1,4 +1,4 @@
-import { useSession } from "@/components/sessions"
+import { useSession } from "@/components/providers/sessions"
 import { useLoaderData } from "@remix-run/react"
 import { useQuery } from "@tanstack/react-query"
 

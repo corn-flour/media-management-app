@@ -1,38 +1,38 @@
 import {
-    Links,
-    Meta,
-    Outlet,
-    Scripts,
-    ScrollRestoration,
+	Links,
+	Meta,
+	Outlet,
+	Scripts,
+	ScrollRestoration,
 } from "@remix-run/react"
 import "./globals.css"
-import { Providers } from "./components/providers"
+import { Providers } from "./components/providers/providers"
 
 export function Layout({ children }: { children: React.ReactNode }) {
-    return (
-        <html lang="en">
-            <head>
-                <meta charSet="utf-8" />
-                <meta
-                    name="viewport"
-                    content="width=device-width, initial-scale=1"
-                />
-                <Meta />
-                <Links />
-            </head>
-            <body>
-                <Providers>{children}</Providers>
-                <ScrollRestoration />
-                <Scripts />
-            </body>
-        </html>
-    )
+	return (
+		<html lang="en">
+			<head>
+				<meta charSet="utf-8" />
+				<meta
+					name="viewport"
+					content="width=device-width, initial-scale=1"
+				/>
+				<Meta />
+				<Links />
+			</head>
+			<body>
+				<Providers>{children}</Providers>
+				<ScrollRestoration />
+				<Scripts />
+			</body>
+		</html>
+	)
 }
 
 export default function App() {
-    return <Outlet />
+	return <Outlet />
 }
 
 export function HydrateFallback() {
-    return <p>Loading...</p>
+	return <p>Loading...</p>
 }
