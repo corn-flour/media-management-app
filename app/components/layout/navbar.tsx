@@ -65,14 +65,14 @@ export const Navbar = () => {
 const ProfileButton = () => {
 	const { isLoggedIn, agent, logout } = useSession()
 	const { data, status } = useQuery({
-		queryKey: ["user-profile", agent?.session?.did],
+		queryKey: ["user-profile", agent.session?.did],
 		queryFn: async () => {
-			const response = await agent?.getProfile({
+			const response = await agent.getProfile({
 				actor: agent.session!.did,
 			})
 			return response
 		},
-		enabled: !!agent,
+		enabled: !!agent.session,
 	})
 	const navigate = useNavigate()
 

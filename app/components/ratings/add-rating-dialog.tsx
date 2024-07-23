@@ -38,8 +38,8 @@ export const RatingDialog = (props: { id: string; name: string }) => {
 
 	const { mutate, status } = useMutation({
 		mutationFn: async (props: { mediaId: string; rating: number }) => {
-			const userDid = agent?.session?.did
-			if (!agent || !userDid) throw new Error("You are not signed in")
+			const userDid = agent.session?.did
+			if (!userDid) throw new Error("You are not signed in")
 			const response = await agent.com.atproto.repo.createRecord({
 				repo: userDid,
 				collection: "org.example.media.rating",

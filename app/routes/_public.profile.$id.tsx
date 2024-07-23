@@ -20,7 +20,7 @@ const UserProfilePage = () => {
 	const { data, status } = useQuery({
 		queryKey: ["userProfile", id],
 		queryFn: async ({ queryKey }) => {
-			const response = await agent?.getProfile({
+			const response = await agent.getProfile({
 				actor: queryKey[1],
 			})
 			if (!response?.success) throw new Error("Failed to get user data")

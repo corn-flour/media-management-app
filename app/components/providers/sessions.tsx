@@ -7,6 +7,10 @@ import {
 } from "react"
 import { BskyAgent, AtpSessionData } from "@atproto/api"
 
+const publicAgent = new BskyAgent({
+	service: "https://public.api.bsky.app",
+})
+
 type SessionContext = {
 	login: (props: {
 		service: string
@@ -14,18 +18,17 @@ type SessionContext = {
 		password: string
 	}) => Promise<void>
 	logout: () => void
-	agent: BskyAgent | null
+	agent: BskyAgent
 }
 
 const SessionContext = createContext<SessionContext>({
 	login: async () => {},
 	logout: () => {},
-	agent: null,
+	agent: publicAgent,
 })
 
-// TODO: have a public agent for calling public apis without logging in
 export const SessionProvider = ({ children }: { children: ReactNode }) => {
-	const [agent, setAgent] = useState<BskyAgent | null>(null)
+	const [agent, setAgent] = useState<BskyAgent>(publicAgent)
 
 	// sign in to an ATP account
 	const login = async (props: {
@@ -45,7 +48,7 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
 
 	// log out of an ATP account
 	const logout = () => {
-		setAgent(null)
+		setAgent(publicAgent)
 		localStorage.removeItem("service")
 		localStorage.removeItem("agentService")
 	}
@@ -71,11 +74,11 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
 
 	// set agent session to localstorage for persisting log in
 	useEffect(() => {
-		if (agent?.session && agent?.service) {
+		if (agent.session) {
 			localStorage.setItem("agentSession", JSON.stringify(agent.session))
 			localStorage.setItem("service", agent.service.toString())
 		}
-	}, [agent?.session, agent?.service])
+	}, [agent.session, agent.service])
 
 	return (
 		<SessionContext.Provider

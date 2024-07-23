@@ -49,7 +49,7 @@ const MovieResultPage = () => {
 		},
 	})
 
-	const userDid = agent?.session?.did
+	const userDid = agent.session?.did
 
 	const ratingInfo = useQuery({
 		queryKey: ["ratings", id],
@@ -58,7 +58,7 @@ const MovieResultPage = () => {
 				throw new Error("Invalid ID")
 			}
 
-			const response = await agent!.com.atproto.repo.getRecord({
+			const response = await agent.com.atproto.repo.getRecord({
 				repo: userDid!,
 				collection: "org.example.media.rating",
 				rkey,
@@ -75,7 +75,7 @@ const MovieResultPage = () => {
 		},
 
 		// only run this query if the user is signed in and has added a rating
-		enabled: !!rkey && !!agent && !!userDid,
+		enabled: !!rkey && !!userDid,
 	})
 
 	// mock data for layout only, since there is no get by id endpoint yet
