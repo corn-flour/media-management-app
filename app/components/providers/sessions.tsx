@@ -64,7 +64,6 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
 					service,
 				})
 				await agent.resumeSession(sessionObj)
-				console.log("resuming session:", agent.session?.handle)
 				setAgent(agent)
 			}
 		}
@@ -95,7 +94,7 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
 
 export const useSession = () => {
 	const session = useContext(SessionContext)
-	const isLoggedIn = !!session.agent
+	const isLoggedIn = !!session.agent.session
 	return {
 		...session,
 		isLoggedIn,

@@ -108,7 +108,6 @@ const ProfileButton = () => {
 				<DropdownMenuGroup>
 					<DropdownMenuItem
 						onClick={() => {
-							console.log("profile option clicked")
 							navigate(`/profile/${data?.data.handle}`)
 						}}
 					>

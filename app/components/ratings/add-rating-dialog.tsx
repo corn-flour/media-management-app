@@ -54,7 +54,6 @@ export const RatingDialog = (props: { id: string; name: string }) => {
 
 			if (!response.success) throw new Error("Failed to add rating")
 
-			console.log("created record", response.data.cid, response.data.uri)
 			return response.data
 		},
 		onError: (error) => {
