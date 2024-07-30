@@ -4,14 +4,22 @@ import { useSession } from "@/components/providers/sessions"
 import { RatingDialog } from "@/components/ratings/add-rating-dialog"
 import { Button } from "@/components/ui/button"
 import { HeartIcon } from "@radix-ui/react-icons"
-import { useLoaderData } from "@remix-run/react"
+import { Link, useLoaderData } from "@remix-run/react"
 import { useQuery } from "@tanstack/react-query"
 
 type MovieDetail = {
 	Title: string
+	Type: "movies" | "series"
 	Year: string
+	Released: string
 	Plot: string
 	Poster: string
+	Runtime: string
+	Genre: string
+	Director: string
+	Writer: string
+	Language: string
+	Country: string
 }
 
 export const clientLoader = async ({
@@ -120,8 +128,13 @@ const MovieResultPage = () => {
 								<p className="text-lg">{mediaInfo.data.Year}</p>
 
 								<div className="mt-4 flex items-center gap-2">
-									{/* TODO: add edit dialog */}
-									{ratingInfo.status === "success" ? (
+									{!userDid ? (
+										<Button asChild>
+											<Link to="/login">
+												Sign in to add rating
+											</Link>
+										</Button>
+									) : ratingInfo.status === "success" ? (
 										<Button>Edit rating</Button>
 									) : (
 										<RatingDialog
@@ -167,13 +180,52 @@ const MovieResultPage = () => {
 						</div>
 					</div>
 
-					<div className="container mx-auto mt-16">
-						<h2 className="text-lg font-bold">Synopsis</h2>
-						<p>{mediaInfo.data.Plot}</p>
-					</div>
+					<section className="container mt-16 flex flex-col-reverse md:flex-row">
+						<aside className="mr-4 w-64 border-r pr-4">
+							<dl className="space-y-2">
+								<InfoField
+									title="Type"
+									value={mediaInfo.data.Type}
+								/>
+								<InfoField
+									title="Aired"
+									value={mediaInfo.data.Released}
+								/>
+								<InfoField
+									title="Runtime"
+									value={mediaInfo.data.Runtime}
+								/>
+								<InfoField
+									title="Country"
+									value={mediaInfo.data.Country}
+								/>
+								<InfoField
+									title="Language"
+									value={mediaInfo.data.Language}
+								/>
+								<InfoField
+									title="Director"
+									value={mediaInfo.data.Director}
+								/>
+							</dl>
+						</aside>
+						<div className="flex-1">
+							<h2 className="text-lg font-bold">Synopsis</h2>
+							<p>{mediaInfo.data.Plot}</p>
+						</div>
+					</section>
 				</>
 			)}
 		</main>
+	)
+}
+
+const InfoField = (props: { title: string; value: string }) => {
+	return (
+		<div>
+			<dt className="font-semibold">{props.title}</dt>
+			<dd className="text-muted-foreground">{props.value}</dd>
+		</div>
 	)
 }
 
