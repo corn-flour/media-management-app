@@ -113,7 +113,7 @@ const MovieResultPage = () => {
 			) : (
 				<>
 					<div className="h-80 w-full bg-primary" />
-					<div className="relative -mt-40 px-2">
+					<div className="relative -mt-40 px-2 pb-8">
 						<div className="container mx-auto flex items-end gap-8">
 							<picture>
 								<img
@@ -181,8 +181,8 @@ const MovieResultPage = () => {
 						</div>
 					</div>
 
-					<section className="container mt-16 flex flex-col-reverse md:flex-row">
-						<aside className="mr-4 w-64 border-r pr-4">
+					<section className="container flex flex-col-reverse border-t md:flex-row">
+						<aside className="mr-4 w-64 border-r pb-8 pr-4 pt-4">
 							<dl className="space-y-2">
 								<InfoField
 									title="Type"
@@ -218,7 +218,7 @@ const MovieResultPage = () => {
 								/>
 							</dl>
 						</aside>
-						<div className="flex-1">
+						<div className="flex-1 pb-8 pt-4">
 							<h2 className="text-lg font-bold">Synopsis</h2>
 							<p>{mediaInfo.data.Plot}</p>
 						</div>
