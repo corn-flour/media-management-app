@@ -20,6 +20,7 @@ type MovieDetail = {
 	Writer: string
 	Language: string
 	Country: string
+	imdbRating: string
 }
 
 export const clientLoader = async ({
@@ -206,6 +207,14 @@ const MovieResultPage = () => {
 								<InfoField
 									title="Director"
 									value={mediaInfo.data.Director}
+								/>
+								<InfoField
+									title="Genre"
+									value={mediaInfo.data.Genre}
+								/>
+								<InfoField
+									title="IMDB rating"
+									value={mediaInfo.data.imdbRating}
 								/>
 							</dl>
 						</aside>
